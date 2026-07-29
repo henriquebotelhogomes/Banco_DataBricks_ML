@@ -1,0 +1,11 @@
+md5: 85f5e695b6feeee9174ebbb84310fec1
+frozen: true
+deps:
+- md5: f847a70359a0176e7070bc32d6fad08c.dir
+  size: 2684261617
+  nfiles: 10
+  hash: md5
+  path: gs://fintech-data-raw/home-credit
+outs:
+- hash: md5
+  path: home-credit

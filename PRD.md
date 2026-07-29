@@ -130,24 +130,24 @@ Banco_DataBricks_ML/
 - [x] Criar projeto GCP: nome de exibição **"Banco DataBricks ML"** (sem underscores — restrição do GCP), Project ID **`banco-databricks-ml`**, Project Number `1003760453129` — ATIVO
 - [x] Vincular billing (conta `013D5E-D6580A-B1D79D` — E-commerce Analytics Billing)
 - [x] **Budget Alert: R$ 170/mês com alertas em 50%/75%/90%, filtrado apenas para este projeto** (budget `66a68d98`)
-- [ ] Habilitar APIs: Cloud Run, Cloud Storage, BigQuery, Cloud Build, Artifact Registry, Pub/Sub, Cloud Logging
-- [ ] Criar Service Account `credit-ai-sa` com roles granulares (Cloud Run Admin, Storage Object Admin, BigQuery Data Editor, BigQuery Job User, Cloud Build Editor)
-- [ ] Gerar chave JSON → `gcp-key.json` (**confirmar que está no .gitignore**)
+- [x] Habilitar APIs: Cloud Run, Cloud Storage, BigQuery, Cloud Build, Artifact Registry, Pub/Sub, Cloud Logging
+- [x] Criar Service Account `credit-ai-sa` com roles granulares (Cloud Run Admin, Storage Object Admin, BigQuery Data Editor, BigQuery Job User, Cloud Build Editor)
+- [x] Gerar chave JSON → `gcp-key.json` (confirmado ignorado pelo Git via `git check-ignore`)
 - [x] Instalar e configurar gcloud CLI (SDK 578.0.0 via winget; `auth login` OK; projeto padrão setado)
 
 ### 4.2. Storage e dados (spec 1.1 e 3.2)
-- [ ] Criar buckets `gs://fintech-models-bucket` e `gs://fintech-data-raw`
-- [ ] Upload dos CSVs: `gsutil -m cp data/raw/*.csv gs://fintech-data-raw/home-credit/`
-- [ ] Configurar DVC (`dvc init` + remote `gs://fintech-data-raw/dvc-store`)
-- [ ] Rastrear dados com `dvc import-url ... --no-download` (sem duplicar os 2.5 GB)
+- [x] Criar buckets `gs://fintech-models-bucket` e `gs://fintech-data-raw` (us-central1, UBLA)
+- [x] Upload dos CSVs para `gs://fintech-data-raw/home-credit/` (10 arquivos, 2.68 GB, ~20 MiB/s)
+- [x] Configurar DVC com extra `[gs]` (`dvc init` + remote `gs://fintech-data-raw/dvc-store`)
+- [x] Rastrear dados com `dvc import-url --no-download` → `data/home-credit.dvc` versionado no Git (sem duplicar os 2.68 GB)
 
 ### 4.3. Terraform (spec 12)
-- [ ] `infra/terraform/` com providers e backend configurados
-- [ ] Recursos: bucket de modelos, Artifact Registry `credit-api`, BigQuery dataset `credit_risk_features`
-- [ ] `terraform plan` e `apply` sem erros (Cloud Run fica para a Fase 3)
+- [x] `infra/terraform/main.tf` com provider google ~> 6.0 (Terraform 1.15.8 instalado via winget)
+- [x] Recursos: buckets (importados ao estado via `terraform import`), Artifact Registry `credit-api`, BigQuery dataset `credit_risk_features`
+- [x] `terraform apply` — 2 added, 0 changed, 0 destroyed (Cloud Run fica para a Fase 3)
 
 ### 4.4. Secrets do CI/CD (spec 1.5)
-- [ ] Adicionar `GCP_SA_KEY` e `GCP_PROJECT_ID` nos Secrets do GitHub Actions
+- [ ] Adicionar `GCP_SA_KEY` e `GCP_PROJECT_ID` nos Secrets do GitHub Actions — 🙋 **ação manual do usuário** (UI do GitHub; só é bloqueante na Fase 3)
 
 **✅ Critério de saída da Fase 1:** dados no GCS + Terraform aplicado + budget alert ativo + secrets configurados.
 
@@ -248,3 +248,4 @@ Uma atividade só é marcada `[x]` quando:
 | 29/07/2026 | Fase 0 | Fundação implementada | Estrutura, API stub (FastAPI + Pydantic v2), 7 testes verdes, CI, Docker validado, push na `main` (commit `0ca8b2d`). Pendentes: dataset Kaggle (3.3) e confirmação do CI verde |
 | 29/07/2026 | Fase 0 | ✅ **Fase 0 concluída** | Dataset Home Credit baixado (~2.5 GB) e EDA validou o mapeamento da spec 3.3. Achados: default 8.07% (desbalanceado), EXT_SOURCE_1 com 56% de nulos, atraso >30d é raro por parcela (0.32%), outliers de income (max 117M) |
 | 29/07/2026 | Fase 1 | Projeto GCP + Budget | gcloud SDK 578 instalado; projeto `banco-databricks-ml` criado (number 1003760453129); billing vinculado; **Budget R$ 170/mês (50/75/90%) filtrado ao projeto**. ⚠️ Conta sem os $300 de crédito — custos reais |
+| 29/07/2026 | Fase 1 | Infra provisionada | 7 APIs habilitadas; SA `credit-ai-sa` (5 roles granulares) + chave local; buckets criados e CSVs no GCS (2.68 GB); DVC com `import-url --no-download`; Terraform 1.15.8 aplicado (Artifact Registry + BigQuery dataset; buckets importados). Pendente: secrets no GitHub (manual) |

@@ -26,6 +26,7 @@ htmlcov/
 # Dados e modelos (versionados via DVC/GCS, não no Git)
 # ============================================
 /data/*
+!/data/*.dvc
 !/data/raw/
 /data/raw/*
 !/data/raw/.gitkeep
