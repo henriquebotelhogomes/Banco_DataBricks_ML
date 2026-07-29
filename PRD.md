@@ -8,7 +8,7 @@
 | **Repositório** | [github.com/henriquebotelhogomes/Banco_DataBricks_ML](https://github.com/henriquebotelhogomes/Banco_DataBricks_ML) — **público** |
 | **Documento base** | [FinTech Solutions S.A.md](./FinTech%20Solutions%20S.A.md) (especificação técnica) |
 | **Objetivo** | Projeto demo para demonstrar as competências da vaga em [descricao_vaga.md](./descricao_vaga.md) |
-| **Status geral** | 🟡 Fase 1 em andamento — projeto GCP e budget criados |
+| **Status geral** | 🟡 Fase 2 em andamento — preparação pré-trial (5.1) |
 | **Última atualização** | 29/07/2026 |
 
 **Legenda de status:** `[ ]` pendente · `[x]` concluído · ⏳ em andamento · 🚫 bloqueado
@@ -119,7 +119,7 @@ Banco_DataBricks_ML/
 
 ---
 
-## 4. FASE 1 — GCP e Dados na Nuvem 🟡 EM ANDAMENTO
+## 4. FASE 1 — GCP e Dados na Nuvem ✅ CONCLUÍDA
 
 > **Objetivo:** infraestrutura GCP provisionada com proteção de custos e dados na camada Bronze.
 >
@@ -147,21 +147,24 @@ Banco_DataBricks_ML/
 - [x] `terraform apply` — 2 added, 0 changed, 0 destroyed (Cloud Run fica para a Fase 3)
 
 ### 4.4. Secrets do CI/CD (spec 1.5)
-- [ ] Adicionar `GCP_SA_KEY` e `GCP_PROJECT_ID` nos Secrets do GitHub Actions — 🙋 **ação manual do usuário** (UI do GitHub; só é bloqueante na Fase 3)
+- [x] Adicionar `GCP_SA_KEY` e `GCP_PROJECT_ID` nos Secrets do GitHub Actions (feito manualmente pelo usuário na UI do GitHub)
 
 **✅ Critério de saída da Fase 1:** dados no GCS + Terraform aplicado + budget alert ativo + secrets configurados.
 
 ---
 
-## 5. FASE 2 — Databricks e Modelo ⚪ NÃO INICIADA
+## 5. FASE 2 — Databricks e Modelo 🟡 EM ANDAMENTO
 
 > ⏰ **ATENÇÃO:** o Trial dura **14 dias**. Só ativar quando os notebooks estiverem escritos e a lógica validada localmente (itens 5.1). O relógio começa no item 5.2.
 
 ### 5.1. Pré-trial (preparação local, sem custo)
-- [ ] Escrever notebook de feature engineering (spec 7) — validar lógica com PySpark local ou pandas em amostra
-- [ ] Escrever script de treinamento (spec 8) — validar XGBoost em amostra local
-- [ ] Escrever notebook de drift/Evidently (spec 16) — validar com dados simulados
-- [ ] Definir `ml_pipeline.py` (criação dos jobs via Databricks SDK/CLI)
+- [x] Escrever notebooks Databricks: `01_bronze_ingestion` (GCS→Delta), `02_feature_engineering` (Bronze→Gold + export BigQuery + assert de paridade com a API)
+- [x] Escrever notebook de treinamento `03_train_model` (XGBoost + `scale_pos_weight` + MLflow Registry + gate de qualidade + export GCS)
+- [x] Escrever notebook de drift `04_drift_monitoring` (Evidently + relatório GCS + alerta Pub/Sub)
+- [x] `ml_pipeline.py` (criação dos jobs `credit-risk-training` mensal e `drift-monitoring` semanal via Databricks SDK, job clusters)
+- [x] Validar lógica localmente: `src/models/train_local.py` (espelho pandas da Gold + XGBoost real em 307k clientes)
+
+> 📊 **Resultado da validação local (baseline 5 features):** AUC-ROC = **0.725** | KS = **34.3** — abaixo das metas da spec (0.85/40), confirmando o **risco nº 4**. `current_bureau_score` domina (79% da importância). Decisão a tomar na Fase 2: enriquecer features (bureau.csv, previous_application — exige ampliar o contrato da API) **ou** ajustar a meta documentando o trade-off.
 
 ### 5.2. Ativação e setup do workspace (spec 1.2) — ⏰ INICIA OS 14 DIAS
 - [ ] Criar conta Trial **Databricks on Google Cloud**
@@ -248,4 +251,6 @@ Uma atividade só é marcada `[x]` quando:
 | 29/07/2026 | Fase 0 | Fundação implementada | Estrutura, API stub (FastAPI + Pydantic v2), 7 testes verdes, CI, Docker validado, push na `main` (commit `0ca8b2d`). Pendentes: dataset Kaggle (3.3) e confirmação do CI verde |
 | 29/07/2026 | Fase 0 | ✅ **Fase 0 concluída** | Dataset Home Credit baixado (~2.5 GB) e EDA validou o mapeamento da spec 3.3. Achados: default 8.07% (desbalanceado), EXT_SOURCE_1 com 56% de nulos, atraso >30d é raro por parcela (0.32%), outliers de income (max 117M) |
 | 29/07/2026 | Fase 1 | Projeto GCP + Budget | gcloud SDK 578 instalado; projeto `banco-databricks-ml` criado (number 1003760453129); billing vinculado; **Budget R$ 170/mês (50/75/90%) filtrado ao projeto**. ⚠️ Conta sem os $300 de crédito — custos reais |
-| 29/07/2026 | Fase 1 | Infra provisionada | 7 APIs habilitadas; SA `credit-ai-sa` (5 roles granulares) + chave local; buckets criados e CSVs no GCS (2.68 GB); DVC com `import-url --no-download`; Terraform 1.15.8 aplicado (Artifact Registry + BigQuery dataset; buckets importados). Pendente: secrets no GitHub (manual) |
+| 29/07/2026 | Fase 1 | Infra provisionada | 7 APIs habilitadas; SA `credit-ai-sa` (5 roles granulares) + chave local; buckets criados e CSVs no GCS (2.68 GB); DVC com `import-url --no-download`; Terraform 1.15.8 aplicado (Artifact Registry + BigQuery dataset; buckets importados) |
+| 29/07/2026 | Fase 1 | ✅ **Fase 1 concluída** | Secrets `GCP_SA_KEY`/`GCP_PROJECT_ID` adicionados pelo usuário no GitHub Actions |
+| 29/07/2026 | Fase 2 | Item 5.1 concluído (pré-trial) | 4 notebooks Databricks + `ml_pipeline.py` + validação local: **AUC 0.725 / KS 34.3** (baseline 5 features, 307k clientes). Metas 0.85/40 exigirão enriquecimento de features — decisão pendente |
