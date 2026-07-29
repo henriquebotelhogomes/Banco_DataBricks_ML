@@ -8,7 +8,7 @@
 | **Repositório** | [github.com/henriquebotelhogomes/Banco_DataBricks_ML](https://github.com/henriquebotelhogomes/Banco_DataBricks_ML) — **público** |
 | **Documento base** | [FinTech Solutions S.A.md](./FinTech%20Solutions%20S.A.md) (especificação técnica) |
 | **Objetivo** | Projeto demo para demonstrar as competências da vaga em [descricao_vaga.md](./descricao_vaga.md) |
-| **Status geral** | 🟡 Fase 2 em andamento — preparação pré-trial (5.1) |
+| **Status geral** | ⏸️ **PAUSADO em 29/07/2026** — Fase 2, item 5.2 (ativação Databricks pendente de decisão; ver seção "Ponto de Retomada") |
 | **Última atualização** | 29/07/2026 |
 
 **Legenda de status:** `[ ]` pendente · `[x]` concluído · ⏳ em andamento · 🚫 bloqueado
@@ -167,7 +167,8 @@ Banco_DataBricks_ML/
 > 📊 **Resultado da validação local (baseline 5 features):** AUC-ROC = **0.725** | KS = **34.3** — abaixo das metas da spec (0.85/40), confirmando o **risco nº 4**. `current_bureau_score` domina (79% da importância). Decisão a tomar na Fase 2: enriquecer features (bureau.csv, previous_application — exige ampliar o contrato da API) **ou** ajustar a meta documentando o trade-off.
 
 ### 5.2. Ativação e setup do workspace (spec 1.2) — ⏰ INICIA OS 14 DIAS
-- [ ] Criar conta Trial **Databricks on Google Cloud**
+- [ ] 🚧 **BLOQUEADO — decisão pendente (ver Ponto de Retomada, seção 11):** usuário criou conta **Free Edition** por engano (não tem cloud provider/GCS/clusters). O Trial "Databricks on Google Cloud" é contratado via **GCP Marketplace**, não pelo try-databricks
+- [ ] Criar conta Trial **Databricks on Google Cloud** (via GCP Marketplace, projeto `banco-databricks-ml`)
 - [ ] Configurar workspace + pasta `credit-risk-project`
 - [ ] Criar cluster `credit-risk-cluster` (Runtime 13.3 LTS, e2-standard-4, auto-termination 30 min)
 - [ ] Conectar ao GCP (credenciais da SA no cluster)
@@ -253,6 +254,37 @@ Itens fora do escopo da demo, documentados como próximos passos naturais:
 
 ---
 
+## 11. ⏸️ PONTO DE RETOMADA (salvo em 29/07/2026)
+
+### Onde paramos
+**Fases 0 e 1 concluídas; Fase 2 item 5.1 concluído.** Próximo passo é o item **5.2 — ativação do workspace Databricks**, que está bloqueado por uma decisão:
+
+- O usuário criou uma conta **Databricks Free Edition** (sem escolha de cloud provider — não serve para a integração com GCP da spec)
+- **Decisão pendente:**
+  - **Opção A (recomendada):** contratar o Trial 14 dias via **GCP Marketplace** → https://console.cloud.google.com/marketplace → buscar "Databricks" → Subscribe com a billing account `013D5E-D6580A-B1D79D` → criar workspace no projeto `banco-databricks-ml` (região us-central1). Custo estimado: DBUs grátis 14 dias + ~R$ 10–30 de VMs GCE nas execuções. ⏰ O prazo de 14 dias só começa na ativação
+  - **Opção B:** adaptar o pipeline à Free Edition (custo zero, mas sem GCS/SA/job clusters — exige reescrever ingestão e enfraquece a demo "Databricks on GCP")
+
+### Estado dos recursos (nenhum custo relevante correndo)
+| Recurso | Estado | Custo parado |
+| :--- | :--- | :--- |
+| GCP projeto `banco-databricks-ml` | Ativo, budget R$ 170/mês (50/75/90%) | ~R$ 0,35/mês (GCS 2.68 GB) |
+| Buckets + BigQuery + Artifact Registry | Provisionados (Terraform) | ≈ zero (vazios/sem uso) |
+| Cloud Run / clusters | Não existem ainda | zero |
+| Databricks Free Edition | Conta criada (não usar se opção A) | zero |
+
+### Checklist de retomada
+1. Decidir opção A ou B (acima)
+2. Se A: ativar via Marketplace, copiar a URL do workspace (`https://xxxx.gcp.databricks.com`) e gerar um token (User Settings > Developer > Access tokens) para o `.env`
+3. Seguir os itens 5.2 → 5.4 do PRD (cluster com auto-termination 30 min, Repos apontando para este repositório, executar notebooks 01→03, `uv run python ml_pipeline.py` para criar os jobs)
+4. Ao final da Fase 2: **deletar o workspace Databricks** (o modelo exportado em `gs://fintech-models-bucket/v1/model.bst` é o artefato que a Fase 3 consome)
+
+### Referências rápidas
+- Local: chave da SA em `gcp-key.json` (raiz, fora do Git) · dataset em `data/raw/` · gcloud autenticado (`henriquebotelho1@gmail.com`)
+- Validação local do modelo: `uv run python src/models/train_local.py` (AUC 0.725 / KS 34.3 — metas ajustadas: >0.72 / >32)
+- Último commit desta pausa: ver histórico da seção 10
+
+---
+
 ## 10. Histórico de Progresso
 
 | Data | Fase | Atividade | Observação |
@@ -266,3 +298,4 @@ Itens fora do escopo da demo, documentados como próximos passos naturais:
 | 29/07/2026 | Fase 1 | ✅ **Fase 1 concluída** | Secrets `GCP_SA_KEY`/`GCP_PROJECT_ID` adicionados pelo usuário no GitHub Actions |
 | 29/07/2026 | Fase 2 | Item 5.1 concluído (pré-trial) | 4 notebooks Databricks + `ml_pipeline.py` + validação local: **AUC 0.725 / KS 34.3** (baseline 5 features, 307k clientes). Metas 0.85/40 exigirão enriquecimento de features — decisão pendente |
 | 29/07/2026 | Fase 2 | **Decisão: rota 2** | Metas de ML ajustadas para **AUC > 0.72 / KS > 32** com racional documentado (spec 2.3); risco nº 4 encerrado; enriquecimento de features registrado no backlog (seção 9) |
+| 29/07/2026 | Fase 2 | ⏸️ **PROJETO PAUSADO** | Usuário iniciará outro projeto. Bloqueio atual: ativação Databricks (conta criada foi Free Edition; Trial on GCP é via GCP Marketplace). Instruções completas de retomada na seção 11 |
