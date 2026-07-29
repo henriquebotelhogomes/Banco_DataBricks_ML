@@ -8,7 +8,7 @@
 | **Repositório** | [github.com/henriquebotelhogomes/Banco_DataBricks_ML](https://github.com/henriquebotelhogomes/Banco_DataBricks_ML) — **público** |
 | **Documento base** | [FinTech Solutions S.A.md](./FinTech%20Solutions%20S.A.md) (especificação técnica) |
 | **Objetivo** | Projeto demo para demonstrar as competências da vaga em [descricao_vaga.md](./descricao_vaga.md) |
-| **Status geral** | 🟢 Fase 0 concluída — próxima: Fase 1 (GCP) |
+| **Status geral** | 🟡 Fase 1 em andamento — projeto GCP e budget criados |
 | **Última atualização** | 29/07/2026 |
 
 **Legenda de status:** `[ ]` pendente · `[x]` concluído · ⏳ em andamento · 🚫 bloqueado
@@ -119,18 +119,21 @@ Banco_DataBricks_ML/
 
 ---
 
-## 4. FASE 1 — GCP e Dados na Nuvem ⚪ NÃO INICIADA
+## 4. FASE 1 — GCP e Dados na Nuvem 🟡 EM ANDAMENTO
 
 > **Objetivo:** infraestrutura GCP provisionada com proteção de custos e dados na camada Bronze.
+>
+> ⚠️ **SEM crédito gratuito de $300** — a conta GCP existente não tem direito ao trial; **todo consumo é cobrado em dinheiro real (BRL)**. Orçamento definido: **R$ 170/mês (≈ US$ 30)**. Disciplina de custos é obrigatória: desligar tudo após o uso e `terraform destroy` pós-demo.
 
 ### 4.1. Conta e projeto GCP (spec 1.1)
-- [ ] Criar conta GCP (ativar $300 de crédito)
-- [ ] Criar projeto GCP: nome de exibição **"Banco_DataBricks_ML"**, Project ID **`banco-databricks-ml`** — anotar o ID (*IDs GCP não aceitam maiúsculas nem underscores*)
-- [ ] **Budget Alert de $250 (50/75/90%) — ANTES de qualquer recurso** (spec 1.6)
+- [x] Conta GCP existente (`henriquebotelho1@gmail.com`) — **sem os $300 de crédito**
+- [x] Criar projeto GCP: nome de exibição **"Banco DataBricks ML"** (sem underscores — restrição do GCP), Project ID **`banco-databricks-ml`**, Project Number `1003760453129` — ATIVO
+- [x] Vincular billing (conta `013D5E-D6580A-B1D79D` — E-commerce Analytics Billing)
+- [x] **Budget Alert: R$ 170/mês com alertas em 50%/75%/90%, filtrado apenas para este projeto** (budget `66a68d98`)
 - [ ] Habilitar APIs: Cloud Run, Cloud Storage, BigQuery, Cloud Build, Artifact Registry, Pub/Sub, Cloud Logging
 - [ ] Criar Service Account `credit-ai-sa` com roles granulares (Cloud Run Admin, Storage Object Admin, BigQuery Data Editor, BigQuery Job User, Cloud Build Editor)
 - [ ] Gerar chave JSON → `gcp-key.json` (**confirmar que está no .gitignore**)
-- [ ] Instalar e configurar gcloud CLI (`gcloud init`, `auth login`, `config set project banco-databricks-ml`)
+- [x] Instalar e configurar gcloud CLI (SDK 578.0.0 via winget; `auth login` OK; projeto padrão setado)
 
 ### 4.2. Storage e dados (spec 1.1 e 3.2)
 - [ ] Criar buckets `gs://fintech-models-bucket` e `gs://fintech-data-raw`
@@ -219,7 +222,7 @@ Banco_DataBricks_ML/
 | # | Risco | Impacto | Mitigação |
 | :--- | :--- | :--- | :--- |
 | 1 | Trial Databricks expira antes do fim da Fase 2 | Alto | Preparar tudo na etapa 5.1 antes de ativar; concentrar execução nos 14 dias |
-| 2 | Estouro dos $300 de crédito GCP | Alto | Budget alert em $250; auto-termination; `terraform destroy` pós-demo |
+| 2 | Estouro de custos GCP (**sem crédito gratuito — gasto real em BRL**) | Crítico | Budget alert de R$ 170 filtrado ao projeto; auto-termination; `terraform destroy` pós-demo; Cloud Run scale-to-zero |
 | 3 | Vazamento de credenciais (repo público) | Crítico | `.gitignore` primeiro; secrets só no GitHub Actions; revisão antes de cada push |
 | 4 | Modelo não atinge AUC > 0.85 | Médio | Baseline conhecido da competição (~0.75–0.78 com poucas features); ajustar meta ou enriquecer features com `bureau.csv` |
 | 5 | Community/Trial sem algum recurso esperado | Médio | Validado na spec: Trial Premium on GCP cobre Repos, Jobs e GCS |
@@ -244,3 +247,4 @@ Uma atividade só é marcada `[x]` quando:
 | 29/07/2026 | — | PRD atualizado | Adoção do **uv** (pyproject.toml/uv.lock) no lugar de requirements.txt; projeto GCP renomeado para **Banco_DataBricks_ML** (ID `banco-databricks-ml`) |
 | 29/07/2026 | Fase 0 | Fundação implementada | Estrutura, API stub (FastAPI + Pydantic v2), 7 testes verdes, CI, Docker validado, push na `main` (commit `0ca8b2d`). Pendentes: dataset Kaggle (3.3) e confirmação do CI verde |
 | 29/07/2026 | Fase 0 | ✅ **Fase 0 concluída** | Dataset Home Credit baixado (~2.5 GB) e EDA validou o mapeamento da spec 3.3. Achados: default 8.07% (desbalanceado), EXT_SOURCE_1 com 56% de nulos, atraso >30d é raro por parcela (0.32%), outliers de income (max 117M) |
+| 29/07/2026 | Fase 1 | Projeto GCP + Budget | gcloud SDK 578 instalado; projeto `banco-databricks-ml` criado (number 1003760453129); billing vinculado; **Budget R$ 170/mês (50/75/90%) filtrado ao projeto**. ⚠️ Conta sem os $300 de crédito — custos reais |
