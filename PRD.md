@@ -8,7 +8,7 @@
 | **Repositório** | [github.com/henriquebotelhogomes/Banco_DataBricks_ML](https://github.com/henriquebotelhogomes/Banco_DataBricks_ML) — **público** |
 | **Documento base** | [FinTech Solutions S.A.md](./FinTech%20Solutions%20S.A.md) (especificação técnica) |
 | **Objetivo** | Projeto demo para demonstrar as competências da vaga em [descricao_vaga.md](./descricao_vaga.md) |
-| **Status geral** | 🟡 Em andamento — Fase 0 (restando apenas 3.3 Dataset) |
+| **Status geral** | 🟢 Fase 0 concluída — próxima: Fase 1 (GCP) |
 | **Última atualização** | 29/07/2026 |
 
 **Legenda de status:** `[ ]` pendente · `[x]` concluído · ⏳ em andamento · 🚫 bloqueado
@@ -73,7 +73,7 @@ Banco_DataBricks_ML/
 
 ---
 
-## 3. FASE 0 — Fundação Local (custo zero) 🟡 EM ANDAMENTO
+## 3. FASE 0 — Fundação Local (custo zero) ✅ CONCLUÍDA
 
 > **Objetivo:** repositório funcional com API esqueleto, testes e CI verde — sem gastar créditos nem ativar trials.
 
@@ -92,11 +92,11 @@ Banco_DataBricks_ML/
 - [x] `uv sync` sem erros (criou `.venv/` e `uv.lock` — lockfile commitado)
 
 ### 3.3. Dataset (spec 3.2 — passo 1)
-- [ ] Criar conta Kaggle e aceitar regras da competição *Home Credit Default Risk*
-- [ ] Configurar Kaggle CLI (`kaggle.json` — **fora do Git**)
-- [ ] Baixar dataset para `data/raw/` (~2.5 GB)
-- [ ] Análise exploratória local com pandas (amostra) — validar colunas usadas na spec 3.3
-- [ ] Documentar achados da exploração em `notebooks/eda_local.ipynb`
+- [x] Criar conta Kaggle e aceitar regras da competição *Home Credit Default Risk*
+- [x] Configurar Kaggle CLI (`kaggle.json` em `~/.kaggle` — **fora do Git**)
+- [x] Baixar dataset para `data/raw/` (688 MB zip → ~2.5 GB, 10 arquivos extraídos)
+- [x] Análise exploratória local com pandas (amostra) — colunas da spec 3.3 validadas
+- [x] Documentar achados da exploração em `src/data/eda_local.py` (script reproduzível via `uv run`)
 
 ### 3.4. Esqueleto da API (spec 10)
 - [x] `src/api/main.py` com `GET /health`
@@ -243,3 +243,4 @@ Uma atividade só é marcada `[x]` quando:
 | 29/07/2026 | — | PRD criado | Início do projeto |
 | 29/07/2026 | — | PRD atualizado | Adoção do **uv** (pyproject.toml/uv.lock) no lugar de requirements.txt; projeto GCP renomeado para **Banco_DataBricks_ML** (ID `banco-databricks-ml`) |
 | 29/07/2026 | Fase 0 | Fundação implementada | Estrutura, API stub (FastAPI + Pydantic v2), 7 testes verdes, CI, Docker validado, push na `main` (commit `0ca8b2d`). Pendentes: dataset Kaggle (3.3) e confirmação do CI verde |
+| 29/07/2026 | Fase 0 | ✅ **Fase 0 concluída** | Dataset Home Credit baixado (~2.5 GB) e EDA validou o mapeamento da spec 3.3. Achados: default 8.07% (desbalanceado), EXT_SOURCE_1 com 56% de nulos, atraso >30d é raro por parcela (0.32%), outliers de income (max 117M) |
