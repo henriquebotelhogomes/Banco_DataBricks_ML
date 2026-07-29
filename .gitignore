@@ -1,0 +1,54 @@
+# ============================================
+# SEGURANÇA — NUNCA COMMITAR (repositório público)
+# ============================================
+.env
+.env.*
+gcp-key.json
+*.json.key
+kaggle.json
+*token*
+*credential*
+!**/tokenizer*  # exceção para eventuais artefatos de ML
+
+# ============================================
+# Python / uv
+# ============================================
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ============================================
+# Dados e modelos (versionados via DVC/GCS, não no Git)
+# ============================================
+/data/*
+!/data/raw/
+/data/raw/*
+!/data/raw/.gitkeep
+*.bst
+*.csv
+*.zip
+*.parquet
+.dvc/cache/
+.dvc/tmp/
+
+# ============================================
+# Notebooks / IDE / SO
+# ============================================
+.ipynb_checkpoints/
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# ============================================
+# Terraform
+# ============================================
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars
