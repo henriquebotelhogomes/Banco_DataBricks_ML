@@ -8,7 +8,7 @@
 | **Repositório** | [github.com/henriquebotelhogomes/Banco_DataBricks_ML](https://github.com/henriquebotelhogomes/Banco_DataBricks_ML) — **público** |
 | **Documento base** | [FinTech Solutions S.A.md](./FinTech%20Solutions%20S.A.md) (especificação técnica) |
 | **Objetivo** | Projeto demo para demonstrar as competências da vaga em [descricao_vaga.md](./descricao_vaga.md) |
-| **Status geral** | 🟡 Em andamento — Fase 0 |
+| **Status geral** | 🟡 Em andamento — Fase 0 (restando apenas 3.3 Dataset) |
 | **Última atualização** | 29/07/2026 |
 
 **Legenda de status:** `[ ]` pendente · `[x]` concluído · ⏳ em andamento · 🚫 bloqueado
@@ -78,18 +78,18 @@ Banco_DataBricks_ML/
 > **Objetivo:** repositório funcional com API esqueleto, testes e CI verde — sem gastar créditos nem ativar trials.
 
 ### 3.1. Repositório e Git
-- [ ] Criar `.gitignore` (`.venv/`, `.env`, `gcp-key.json`, `data/`, `__pycache__`, `*.bst`, `.dvc/cache`)
-- [ ] Inicializar Git local e conectar ao remote `https://github.com/henriquebotelhogomes/Banco_DataBricks_ML`
-- [ ] Criar `README.md` com visão geral, arquitetura e badge de CI
-- [ ] Commit inicial com PRD + especificação + descrição da vaga
-- [ ] Criar estrutura de pastas (seção 2 deste PRD)
+- [x] Criar `.gitignore` (`.venv/`, `.env`, `gcp-key.json`, `data/`, `__pycache__`, `*.bst`, `.dvc/cache`)
+- [x] Inicializar Git local e conectar ao remote `https://github.com/henriquebotelhogomes/Banco_DataBricks_ML`
+- [x] Criar `README.md` com visão geral, arquitetura e badge de CI
+- [x] Commit inicial com PRD + especificação + descrição da vaga
+- [x] Criar estrutura de pastas (seção 2 deste PRD)
 
 ### 3.2. Ambiente local (spec 1.4) — gerenciado com **uv**
-- [ ] Python 3.11+ instalado e verificado (`python --version`)
-- [ ] Docker Desktop instalado e verificado (`docker --version`)
-- [ ] Instalar **uv** (`winget install astral-sh.uv` no Windows) e verificar (`uv --version`)
-- [ ] `uv init` → `pyproject.toml` com dependências iniciais (fastapi, uvicorn, pydantic, xgboost, scikit-learn, pandas, shap) e grupo dev (pytest, httpx)
-- [ ] `uv sync` sem erros (cria `.venv/` e `uv.lock` automaticamente — commitar o `uv.lock`)
+- [x] Python 3.11+ instalado e verificado (3.11.15 fixado via `.python-version` / host com 3.12)
+- [x] Docker Desktop instalado e verificado (29.6.1)
+- [x] Instalar **uv** (0.11.25 já presente) e verificar (`uv --version`)
+- [x] `pyproject.toml` com dependências iniciais (fastapi, uvicorn, pydantic, xgboost, scikit-learn, pandas, shap) e grupo dev (pytest, httpx)
+- [x] `uv sync` sem erros (criou `.venv/` e `uv.lock` — lockfile commitado)
 
 ### 3.3. Dataset (spec 3.2 — passo 1)
 - [ ] Criar conta Kaggle e aceitar regras da competição *Home Credit Default Risk*
@@ -99,21 +99,21 @@ Banco_DataBricks_ML/
 - [ ] Documentar achados da exploração em `notebooks/eda_local.ipynb`
 
 ### 3.4. Esqueleto da API (spec 10)
-- [ ] `src/api/main.py` com `GET /health`
-- [ ] `src/api/schemas.py` com `CreditRequest` (Pydantic v2: `income`, `age`, `avg_spend_90d`, `total_late_payments`, `current_bureau_score`)
-- [ ] `POST /predict` com modelo *stub* (retorna score simulado até a Fase 2 entregar o modelo real)
-- [ ] Estrutura `src/api/services/` (inference.py e logging_bq.py como stubs)
-- [ ] Rodar localmente: `uv run uvicorn src.api.main:app` e validar Swagger em `/docs`
+- [x] `src/api/main.py` com `GET /health`
+- [x] `src/api/schemas.py` com `CreditRequest` (Pydantic v2: `income`, `age`, `avg_spend_90d`, `total_late_payments`, `current_bureau_score`) + `CreditResponse`
+- [x] `POST /predict` com modelo *stub* (retorna score simulado até a Fase 2 entregar o modelo real)
+- [x] Estrutura `src/api/services/` (inference.py e logging_bq.py como stubs)
+- [x] Rodar localmente e validar (validado via testes + container Docker)
 
 ### 3.5. Testes e CI (spec 11 e 14)
-- [ ] `tests/test_api.py` (health + predict com payload válido e inválido)
-- [ ] `uv run pytest` verde localmente
-- [ ] Workflow `.github/workflows/ci.yml` — **apenas testes** nesta fase (setup com `astral-sh/setup-uv` + `uv sync`, sem deploy)
-- [ ] CI verde no GitHub após push
+- [x] `tests/test_api.py` (health + predict válido/inválido — 7 testes, incl. validações Pydantic)
+- [x] `uv run pytest` verde localmente (7/7 passed)
+- [x] Workflow `.github/workflows/ci.yml` — **apenas testes** nesta fase (setup com `astral-sh/setup-uv` + `uv sync --frozen`, sem deploy)
+- [x] CI verde no GitHub após push ([run #1 — success](https://github.com/henriquebotelhogomes/Banco_DataBricks_ML/actions/runs/30468592212))
 
 ### 3.6. Docker local (spec 13)
-- [ ] `Dockerfile` conforme spec (sem modelo embutido; dependências instaladas via `uv sync --frozen` a partir de `pyproject.toml` + `uv.lock`)
-- [ ] `docker build` e `docker run` locais funcionando (`/health` responde na porta 8080)
+- [x] `Dockerfile` conforme spec (sem modelo embutido; dependências via `uv sync --frozen --no-dev`)
+- [x] `docker build` e `docker run` locais funcionando (`/health` e `/predict` validados na porta 8080)
 
 **✅ Critério de saída da Fase 0:** CI verde no repositório público + API rodando em Docker local + dataset explorado.
 
@@ -242,3 +242,4 @@ Uma atividade só é marcada `[x]` quando:
 | :--- | :--- | :--- | :--- |
 | 29/07/2026 | — | PRD criado | Início do projeto |
 | 29/07/2026 | — | PRD atualizado | Adoção do **uv** (pyproject.toml/uv.lock) no lugar de requirements.txt; projeto GCP renomeado para **Banco_DataBricks_ML** (ID `banco-databricks-ml`) |
+| 29/07/2026 | Fase 0 | Fundação implementada | Estrutura, API stub (FastAPI + Pydantic v2), 7 testes verdes, CI, Docker validado, push na `main` (commit `0ca8b2d`). Pendentes: dataset Kaggle (3.3) e confirmação do CI verde |
