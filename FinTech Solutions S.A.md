@@ -185,7 +185,8 @@ No cenário financeiro atual, a agilidade na concessão de crédito aliada à pr
 *   Implementar um ciclo de vida de ML (**MLOps**) totalmente automatizado.
 
 ### 2.3. Métricas de Sucesso
-*   **Métricas de ML:** AUC-ROC > **0.85**, KS (Kolmogorov-Smirnov) > **40**.
+*   **Métricas de ML:** AUC-ROC > **0.72**, KS (Kolmogorov-Smirnov) > **32**.
+    -   *Racional (ajustado em 29/07/2026):* metas calibradas por validação empírica local com as **5 features do contrato da API** sobre os 307k clientes do Home Credit (AUC 0.725 / KS 34.3). Referência externa: o vencedor da competição Kaggle atingiu ~0.805 usando centenas de features — a meta original de 0.85 era inatingível neste dataset. O foco do projeto é a **engenharia de IA/MLOps ponta a ponta**; o ganho de AUC via enriquecimento de features (`bureau.csv`, `previous_application.csv`) está documentado como evolução futura no backlog do PRD.
 *   **Métricas de Negócio:** Redução do *Time-to-Decision* de **48h** para **< 5 segundos**.
 *   **Métricas de Engenharia:** Disponibilidade da API de **99.9% (SLA)** e latência de inferência **< 200ms**.
 

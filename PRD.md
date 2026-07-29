@@ -39,7 +39,7 @@ Pipeline completo de ML em produção: dados do **Home Credit Default Risk** (Ka
 | Metodologias ágeis | Este PRD com sprints/checklists e DoD |
 
 ### 1.4. Métricas de sucesso
-- **ML:** AUC-ROC > 0.85 · KS > 40
+- **ML:** AUC-ROC > 0.72 · KS > 32 *(ajustadas em 29/07/2026 — rota 2: calibradas pela validação local com as 5 features do contrato da API; enriquecimento de features é backlog, seção 9)*
 - **Negócio:** decisão de crédito em < 5 segundos
 - **Engenharia:** latência de inferência < 200ms · disponibilidade 99.9%
 
@@ -181,7 +181,7 @@ Banco_DataBricks_ML/
 
 ### 5.4. Treinamento e MLOps (spec 8 e 9)
 - [ ] Treinar XGBoost com tracking MLflow (`/Shared/Credit_Risk_Analysis`)
-- [ ] Avaliar métricas: **AUC-ROC > 0.85 e KS > 40** (critério de aceite do modelo)
+- [ ] Avaliar métricas: **AUC-ROC > 0.72 e KS > 32** (critério de aceite ajustado — rota 2; gate implementado no notebook 03)
 - [ ] Registrar modelo `credit-risk-classifier` no MLflow Model Registry
 - [ ] Promover a `Production` e exportar `model.bst` para `gs://fintech-models-bucket/v1/`
 - [ ] Criar job `credit-risk-training` (mensal) e `drift-monitoring` (semanal) nos Workflows
@@ -227,7 +227,7 @@ Banco_DataBricks_ML/
 | 1 | Trial Databricks expira antes do fim da Fase 2 | Alto | Preparar tudo na etapa 5.1 antes de ativar; concentrar execução nos 14 dias |
 | 2 | Estouro de custos GCP (**sem crédito gratuito — gasto real em BRL**) | Crítico | Budget alert de R$ 170 filtrado ao projeto; auto-termination; `terraform destroy` pós-demo; Cloud Run scale-to-zero |
 | 3 | Vazamento de credenciais (repo público) | Crítico | `.gitignore` primeiro; secrets só no GitHub Actions; revisão antes de cada push |
-| 4 | Modelo não atinge AUC > 0.85 | Médio | Baseline conhecido da competição (~0.75–0.78 com poucas features); ajustar meta ou enriquecer features com `bureau.csv` |
+| 4 | Modelo não atinge AUC > 0.85 | — | ✅ **Materializado e resolvido (rota 2, 29/07/2026):** validação local confirmou AUC 0.725 com 5 features; metas ajustadas para AUC > 0.72 / KS > 32 com racional documentado na spec 2.3; enriquecimento de features movido para o backlog (seção 9) |
 | 5 | Community/Trial sem algum recurso esperado | Médio | Validado na spec: Trial Premium on GCP cobre Repos, Jobs e GCS |
 
 ---
@@ -242,7 +242,18 @@ Uma atividade só é marcada `[x]` quando:
 
 ---
 
-## 9. Histórico de Progresso
+## 9. Backlog / Evoluções Futuras (pós-Fase 3)
+
+Itens fora do escopo da demo, documentados como próximos passos naturais:
+
+- [ ] **Enriquecimento de features**: agregados de `bureau.csv` (dívidas em outras instituições), `previous_application.csv` (histórico de propostas) e `POS_CASH_balance.csv` — potencial de AUC ~0.75–0.78; exige ampliar o contrato da API e reprocessar a Gold
+- [ ] **Tuning de hiperparâmetros** (Optuna) com validação cruzada estratificada
+- [ ] **Retreinamento automático disparado por drift** (alerta Pub/Sub → trigger do job de treino)
+- [ ] **Calibração de probabilidades** (Platt/isotonic) para o threshold de decisão de negócio
+
+---
+
+## 10. Histórico de Progresso
 
 | Data | Fase | Atividade | Observação |
 | :--- | :--- | :--- | :--- |
@@ -254,3 +265,4 @@ Uma atividade só é marcada `[x]` quando:
 | 29/07/2026 | Fase 1 | Infra provisionada | 7 APIs habilitadas; SA `credit-ai-sa` (5 roles granulares) + chave local; buckets criados e CSVs no GCS (2.68 GB); DVC com `import-url --no-download`; Terraform 1.15.8 aplicado (Artifact Registry + BigQuery dataset; buckets importados) |
 | 29/07/2026 | Fase 1 | ✅ **Fase 1 concluída** | Secrets `GCP_SA_KEY`/`GCP_PROJECT_ID` adicionados pelo usuário no GitHub Actions |
 | 29/07/2026 | Fase 2 | Item 5.1 concluído (pré-trial) | 4 notebooks Databricks + `ml_pipeline.py` + validação local: **AUC 0.725 / KS 34.3** (baseline 5 features, 307k clientes). Metas 0.85/40 exigirão enriquecimento de features — decisão pendente |
+| 29/07/2026 | Fase 2 | **Decisão: rota 2** | Metas de ML ajustadas para **AUC > 0.72 / KS > 32** com racional documentado (spec 2.3); risco nº 4 encerrado; enriquecimento de features registrado no backlog (seção 9) |
